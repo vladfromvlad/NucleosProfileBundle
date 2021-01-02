@@ -55,13 +55,13 @@ return static function (ContainerConfigurator $container): void {
             ->args([
                 new Reference('event_dispatcher'),
                 new Reference('nucleos_user.user_manager'),
-                new Reference('twig'),
+                new Reference('router'),
             ])
 
         ->set(RegistrationConfirmedAction::class)
             ->public()
             ->args([
-                new Reference('router'),
+                new Reference('twig '),
                 new Reference('security.helper'),
                 new Reference('security.token_storage'),
             ])

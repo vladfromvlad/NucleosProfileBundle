@@ -24,6 +24,7 @@ return static function (ContainerConfigurator $container): void {
                 new Reference('nucleos_user.util.token_generator'),
                 new Reference('router'),
                 new Reference('session'),
+                new Reference('nucleos_user.user_manager'),
             ])
 
     ;

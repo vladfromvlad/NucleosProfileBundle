@@ -14,7 +14,7 @@ namespace Nucleos\ProfileBundle\EventListener;
 use Nucleos\ProfileBundle\Mailer\MailerInterface;
 use Nucleos\ProfileBundle\NucleosProfileEvents;
 use Nucleos\UserBundle\Event\FormEvent;
-use Nucleos\UserBundle\Model\UserInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Nucleos\UserBundle\Util\TokenGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -43,16 +43,23 @@ final class EmailConfirmationListener implements EventSubscriberInterface
      */
     private $session;
 
+    /**
+     * @var UserManagerInterface
+     */
+    private $userManager;
+
     public function __construct(
         MailerInterface $mailer,
         TokenGeneratorInterface $tokenGenerator,
         UrlGeneratorInterface $router,
-        SessionInterface $session
+        SessionInterface $session,
+        UserManagerInterface $userManager
     ) {
         $this->mailer         = $mailer;
         $this->tokenGenerator = $tokenGenerator;
         $this->router         = $router;
         $this->session        = $session;
+        $this->userManager    = $userManager;
     }
 
     /**
@@ -67,11 +74,7 @@ final class EmailConfirmationListener implements EventSubscriberInterface
 
     public function onRegistrationSuccess(FormEvent $event): void
     {
-        $user = $event->getForm()->getData();
-
-        if (!$user instanceof UserInterface) {
-            return;
-        }
+        $user = $event->getForm()->getData()->toUser($this->userManager);
 
         $user->setEnabled(false);
 
